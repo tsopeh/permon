@@ -8,6 +8,16 @@
     <title>Example app</title>
 </head>
 <body>
-<script src="./lib/main.ts"></script>
+<script type="module">
+    import {PerfMon} from './lib/main'
+
+    const perf = PerfMon({
+        onPublishStats: (stats) => {
+            console.log(stats)
+            console.table(stats)
+        }
+    })
+    console.log(perf)
+</script>
 </body>
 </html>
