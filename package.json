@@ -1,0 +1,28 @@
+{
+  "name": "client-performance-monitor",
+  "version": "1.0.0",
+  "description": "A simple and customizable performance monitor for your clientside apps.",
+  "repository": "git@github.com:tsopeh/client-performance-monitor.git",
+  "author": "Petar Stokić <5ar100kic@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/client-performance-monitor.umd.js",
+  "module": "./dist/client-performance-monitor.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/client-performance-monitor.es.js",
+      "require": "./dist/client-performance-monitor.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4"
+  }
+}
