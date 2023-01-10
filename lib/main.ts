@@ -1,84 +1,72 @@
-import {Stats} from "./stats";
+import { fps, frameLatency, memory, Metric } from './metrics'
 
 export interface PerfMonConfig {
-    headless?: boolean
-    sampleSize?: number
-    onPublishStats?: (stats: Stats) => void
-    minDelayBetweenPublishingStats?: number
+  headless?: boolean
+  sampleSize?: number
+  onPublishStats?: (stats: Record<string, any>) => void
+  minDelayBetweenPublishingStats?: number
+  metrics?: Record<string, Metric<any>>
 }
 
 interface PerfMonConfig_Normalized {
-    headless: boolean
-    sampleSize: number
-    onPublishStats: ((stats: Stats) => void) | null
-    minDelayBetweenPublishingStats: number
+  headless: boolean
+  sampleSize: number
+  onPublishStats: ((stats: Record<string, any>) => void)
+  minDelayBetweenPublishingStats: number
+  metrics: Record<string, Metric<any>>
 }
 
-function normalizeConfig(input?: PerfMonConfig): PerfMonConfig_Normalized {
-    console.log(input)
-    return {
-        headless: input.headless ?? false,
-        sampleSize: Math.max(0, input.sampleSize ?? 256),
-        onPublishStats: input.onPublishStats ?? (() => {
-        }),
-        minDelayBetweenPublishingStats: Math.max(0, input.minDelayBetweenPublishingStats ?? 1000)
-    }
+function normalizeConfig (input?: PerfMonConfig): PerfMonConfig_Normalized {
+  const defaultMetrics: Record<string, Metric<any>> = {
+    fps: fps(),
+    frameLatency: frameLatency(),
+    memory,
+  }
+  return {
+    headless: input?.headless ?? false,
+    sampleSize: Math.max(0, input?.sampleSize ?? 256),
+    onPublishStats: input?.onPublishStats ?? (() => {
+    }),
+    minDelayBetweenPublishingStats: Math.max(0, input?.minDelayBetweenPublishingStats ?? 1000),
+    metrics: input?.metrics ?? defaultMetrics,
+  }
 }
 
-export function PerfMon(_config?: PerfMonConfig) {
+export function PerfMon (_config?: PerfMonConfig) {
 
-    const config = normalizeConfig(_config)
+  const config = normalizeConfig(_config)
 
-    const sample: Array<number> = [0]
-    let tLatestPublish: number | null = null
-    let reqId: number | null = null
+  const samples: Array<number> = [0]
+  let tLatestPublish: number | null = null
+  let reqId: number | null = null
 
-    function onAnimationFrame() {
-        const tNow = window.performance.now()
-        sample.push(tNow)
-        const shouldCalculateStats = sample.length >= config.sampleSize
-        if (shouldCalculateStats) {
-            if (tLatestPublish == null || tLatestPublish + config.minDelayBetweenPublishingStats <= tNow) {
-                config.onPublishStats(calcStatsFromSample(sample))
-                tLatestPublish = tNow
-            }
-            // Remove oldest.
-            sample.shift()
+  function onAnimationFrame () {
+    const tNow = window.performance.now()
+    samples.push(tNow)
+    const shouldCalculateStats = samples.length >= config.sampleSize
+    if (shouldCalculateStats) {
+      if (tLatestPublish == null || tLatestPublish + config.minDelayBetweenPublishingStats <= tNow) {
+        const stats: Record<string, Metric<any>> = {}
+        for (const [key, metric] of Object.entries(config.metrics)) {
+          stats[key] = metric(samples)
         }
-        reqId = requestAnimationFrame(onAnimationFrame)
+        config.onPublishStats(stats)
+        tLatestPublish = tNow
+      }
+      // Remove oldest.
+      samples.shift()
     }
-
     reqId = requestAnimationFrame(onAnimationFrame)
-    console.log('requestAnimationFrame', reqId)
-    return {
-        destroy: function () {
-            if (reqId != null) {
-                cancelAnimationFrame(reqId)
-            }
-        }
-    }
+  }
 
-}
+  reqId = requestAnimationFrame(onAnimationFrame)
 
-function calcStatsFromSample(sample: ReadonlyArray<number>, prevStats?: Stats): Stats {
-    const tOldest = sample[0]
-    const tLatest = sample[sample.length - 1]
-    const timeThreshold = tLatest - 1000
-    let currFps = 0
-    for (let i = sample.length - 1; i >= 0; i--) {
-        const t = sample[i]
-        if (t > timeThreshold) {
-            currFps++
-        }
-    }
-    return {
-        latestFps: currFps,
-        minFps: 0,
-        maxFps: 0,
-        averageFps: 0,
-        latestTimeBetweenFramesMs: 0,
-        minTimeBetweenFramesMs: 0,
-        maxTimeBetweenFrames: 0,
-        averageTimeBetweenFramesMs: 0
-    }
+  return {
+    destroy: function () {
+      if (reqId != null) {
+        cancelAnimationFrame(reqId)
+      }
+    },
+  }
+
 }
