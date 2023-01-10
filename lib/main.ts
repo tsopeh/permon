@@ -36,14 +36,15 @@ export function PerfMon (_config?: PerfMonConfig) {
 
   const config = normalizeConfig(_config)
 
-  const samples: Array<number> = [0]
+  const _getStableSamples = getStableSampleWindow(config.sampleSize)
+
   let tLatestPublish: number | null = null
   let reqId: number | null = null
 
   function onAnimationFrame () {
     const tNow = window.performance.now()
-    samples.push(tNow)
-    const shouldCalculateStats = samples.length >= config.sampleSize
+    const samples = _getStableSamples(tNow)
+    const shouldCalculateStats = samples != null
     if (shouldCalculateStats) {
       if (tLatestPublish == null || tLatestPublish + config.minDelayBetweenPublishingStats <= tNow) {
         const stats: Record<string, Metric<any>> = {}
@@ -53,8 +54,6 @@ export function PerfMon (_config?: PerfMonConfig) {
         config.onPublishStats(stats)
         tLatestPublish = tNow
       }
-      // Remove oldest.
-      samples.shift()
     }
     reqId = requestAnimationFrame(onAnimationFrame)
   }
@@ -69,4 +68,28 @@ export function PerfMon (_config?: PerfMonConfig) {
     },
   }
 
+}
+
+function getStableSampleWindow (sampleSize: number) {
+  const successiveVisibleFramesThreshold = sampleSize / 2
+  let _visibleCount = 0
+  const _sample: Array<number> = []
+  document.addEventListener('visibilitychange', () => {
+    _visibleCount = 0
+    _sample.length = 0
+  })
+  return function onAnimationFrame (tNow: number): (ReadonlyArray<number> | null) {
+    if (_visibleCount > successiveVisibleFramesThreshold) {
+      _sample.push(tNow)
+      if (_sample.length > sampleSize) {
+        _sample.shift()
+        return _sample
+      } else {
+        return null
+      }
+    } else {
+      _visibleCount++
+      return null
+    }
+  }
 }
