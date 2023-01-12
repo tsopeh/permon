@@ -1,19 +1,19 @@
 {
-  "name": "client-performance-monitor",
+  "name": "permon",
   "version": "1.0.0",
   "description": "A simple and customizable performance monitor for your clientside apps.",
-  "repository": "git@github.com:tsopeh/client-performance-monitor.git",
+  "repository": "git@github.com:tsopeh/permon.git",
   "author": "Petar Stokić <5ar100kic@gmail.com>",
   "license": "MIT",
   "files": [
     "dist"
   ],
-  "main": "./dist/client-performance-monitor.umd.js",
-  "module": "./dist/client-performance-monitor.es.js",
+  "main": "./dist/permon.umd.js",
+  "module": "./dist/permon.es.js",
   "exports": {
     ".": {
-      "import": "./dist/client-performance-monitor.es.js",
-      "require": "./dist/client-performance-monitor.umd.js"
+      "import": "./dist/permon.es.js",
+      "require": "./dist/permon.umd.js"
     }
   },
   "scripts": {

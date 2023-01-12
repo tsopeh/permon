@@ -1,7 +1,7 @@
 const path = require('path')
 const {defineConfig} = require('vite')
 
-const libName = 'ClientPerformanceMonitor'
+const libName = 'permon'
 
 module.exports = defineConfig({
     build: {

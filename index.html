@@ -9,9 +9,9 @@
 </head>
 <body>
 <script type="module">
-    import {PerfMon} from './lib/main'
+    import {Permon} from './lib/main'
 
-    const perf = new PerfMon({
+    const permon = new Permon({
         onPublishStats: (stats) => {
             console.table(stats)
         }

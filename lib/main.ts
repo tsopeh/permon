@@ -1,6 +1,6 @@
 import { fps, frameLatency, memory, Metric } from './metrics'
 
-export interface PerfMonConfig {
+export interface PermonConfig {
   headless?: boolean
   sampleSize?: number
   onPublishStats?: (stats: Record<string, any>) => void
@@ -8,7 +8,7 @@ export interface PerfMonConfig {
   metrics?: Record<string, Metric<any>>
 }
 
-interface PerfMonConfig_Normalized {
+interface PermonConfig_Normalized {
   headless: boolean
   sampleSize: number
   onPublishStats: ((stats: Record<string, any>) => void)
@@ -16,7 +16,7 @@ interface PerfMonConfig_Normalized {
   metrics: Record<string, Metric<any>>
 }
 
-function normalizeConfig (input?: PerfMonConfig): PerfMonConfig_Normalized {
+function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
   const defaultMetrics: Record<string, Metric<any>> = {
     fps: fps(),
     frameLatency: frameLatency(),
@@ -32,11 +32,11 @@ function normalizeConfig (input?: PerfMonConfig): PerfMonConfig_Normalized {
   }
 }
 
-export class PerfMon {
+export class Permon {
 
   private reqId: number | null = null
 
-  public constructor (_config?: PerfMonConfig) {
+  public constructor (_config?: PermonConfig) {
 
     const config = normalizeConfig(_config)
 
