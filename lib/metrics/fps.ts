@@ -1,3 +1,4 @@
+import { onDocumentVisibilityChange } from '../utils'
 import { Metric } from './metric'
 
 export interface FpsData {
@@ -7,31 +8,46 @@ export interface FpsData {
   highest: number
 }
 
-export const fps: () => Metric<FpsData> = () => {
-
-  let _lowest: number = Infinity
-  let _highest: number = -Infinity
+export const fps: () => Metric<FpsData | null> = () => {
+  const _sampleWindow: Array<number> = []
+  let _isStable = false
   let _count = 0
   let _mean = 0
+  let _lowest = Infinity
+  let _highest = 0
 
-  return (samples) => {
-    const tLatest = samples[samples.length - 1]
-    const timeThreshold = tLatest - 1000
-    let currFps = 0
-    for (let i = samples.length - 1; i >= 0; i--) {
-      const t = samples[i]
-      if (t > timeThreshold) {
-        currFps++
+  let isDocumentVisible = onDocumentVisibilityChange((isVisible) => {
+    isDocumentVisible = isVisible
+    _sampleWindow.length = 0
+    _isStable = false
+    _count = 0
+  })
+
+  return (t) => {
+    if (!isDocumentVisible) {
+      _sampleWindow.length = 0
+      _isStable = false
+      _count = 0
+      return null
+    }
+    _sampleWindow.push(t)
+    let elapsedFromOldest = t - _sampleWindow[0]
+    if (!_isStable) {
+      if (elapsedFromOldest >= 1000) {
+        _isStable = true
+      } else {
+        return null
       }
     }
-    if (currFps < _lowest) {
-      _lowest = currFps
+    while (elapsedFromOldest >= 1000) {
+      _sampleWindow.shift()
+      elapsedFromOldest = t - _sampleWindow[0]
     }
-    if (currFps > _highest) {
-      _highest = currFps
-    }
+    const currFps = _sampleWindow.length
     _count++
     _mean = _mean * (_count - 1) / _count + currFps / _count
+    _lowest = Math.min(_lowest, currFps)
+    _highest = Math.max(_highest, currFps)
     return {
       current: currFps,
       mean: _mean,

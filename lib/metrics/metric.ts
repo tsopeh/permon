@@ -1,1 +1,1 @@
-export type Metric<T> = (samples: ReadonlyArray<number>) => T
+export type Metric<T> = (t: number) => T
