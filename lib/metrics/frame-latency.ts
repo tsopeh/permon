@@ -12,39 +12,37 @@ export const frameLatency: () => Metric<FrameLatencyData | null> = () => {
 
   let _isStable = false
   let _tFirstVisible = Infinity
-  let _prev = Infinity
-  let _curr = Infinity
+  let _tPrev = Infinity
+  let _tCurr = Infinity
 
   let _lowest = +Infinity
   let _highest = -Infinity
-  let _mean = 0
   let _count = 0
+  let _mean = 0
 
   let isDocumentVisible = onDocumentVisibilityChange((isVisible) => {
     isDocumentVisible = isVisible
-    _tFirstVisible = Infinity
     _isStable = false
-    _count = 0
+    _tFirstVisible = Infinity
+    _tPrev = Infinity
+    _tCurr = Infinity
   })
 
   return (t) => {
     if (!isDocumentVisible) {
-      _tFirstVisible = Infinity
-      _isStable = false
-      _count = 0
       return null
     }
-    _prev = _curr
-    _curr = t
+    _tPrev = _tCurr
+    _tCurr = t
     if (!_isStable) {
       _tFirstVisible = Math.min(_tFirstVisible, t)
-      if (t - _tFirstVisible >= 1000) {
+      if (t - _tFirstVisible >= 1900) {
         _isStable = true
       } else {
         return null
       }
     }
-    const currLatency = _curr - _prev
+    const currLatency = _tCurr - _tPrev
     if (currLatency < _lowest) {
       _lowest = currLatency
     }

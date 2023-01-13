@@ -8,14 +8,45 @@
     <title>Example app</title>
 </head>
 <body>
-<script type="module">
-    import {Permon} from './lib/main'
 
-    const permon = new Permon({
-        onPublishStats: (stats) => {
-            console.table(stats)
+<button id="increaseLoad">Increase load</button>
+<button id="releaseMemory">Release memory</button>
+
+<script type="module">
+  import { Permon } from './lib/main'
+
+  const permon = new Permon({
+    onPublishStats: (stats) => {
+      console.table(stats)
+    },
+  })
+
+  const memory = []
+
+  function increaseLoad () {
+    if (window.performance && window.performance.memory) {
+      // cap at 80% of available memory
+      if (performance.memory.usedJSHeapSize < performance.memory.jsHeapSizeLimit * .8) {
+        var i = 0
+        while (i < 100) {
+          i++
+          memory.push(new Float64Array(Math.pow(2, 10)))
         }
-    })
+      }
+    }
+  }
+
+  function releaseMemory () {
+    memory.length = 0
+  }
+
+  document.getElementById('increaseLoad').addEventListener('click', () => {
+    increaseLoad()
+  })
+
+  document.getElementById('releaseMemory').addEventListener('click', () => {
+    releaseMemory()
+  })
 </script>
 </body>
 </html>

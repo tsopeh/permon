@@ -2,17 +2,15 @@ import { fps, frameLatency, memory, Metric } from './metrics'
 
 export interface PermonConfig {
   headless?: boolean
-  sampleSize?: number
   onPublishStats?: (stats: Record<string, any>) => void
-  minDelayBetweenPublishingStats?: number
+  minDelayMsBetweenPublishingStats?: number
   metrics?: Record<string, Metric<any>>
 }
 
 interface PermonConfig_Normalized {
   headless: boolean
-  sampleSize: number
   onPublishStats: ((stats: Record<string, any>) => void)
-  minDelayBetweenPublishingStats: number
+  minDelayMsBetweenPublishingStats: number
   metrics: Record<string, Metric<any>>
 }
 
@@ -24,10 +22,8 @@ function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
   }
   return {
     headless: input?.headless ?? false,
-    sampleSize: Math.max(0, input?.sampleSize ?? 256),
-    onPublishStats: input?.onPublishStats ?? (() => {
-    }),
-    minDelayBetweenPublishingStats: Math.max(0, input?.minDelayBetweenPublishingStats ?? 1000),
+    onPublishStats: input?.onPublishStats ?? (() => { }),
+    minDelayMsBetweenPublishingStats: Math.max(0, input?.minDelayMsBetweenPublishingStats ?? 1000),
     metrics: input?.metrics ?? defaultMetrics,
   }
 }
@@ -48,7 +44,7 @@ export class Permon {
       for (const [key, metric] of Object.entries(config.metrics)) {
         stats[key] = metric(t)
       }
-      if (tLatestPublish == null || tLatestPublish + config.minDelayBetweenPublishingStats <= t) {
+      if (tLatestPublish == null || tLatestPublish + config.minDelayMsBetweenPublishingStats <= t) {
         config.onPublishStats(stats)
         tLatestPublish = t
       }

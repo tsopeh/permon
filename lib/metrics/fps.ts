@@ -9,31 +9,29 @@ export interface FpsData {
 }
 
 export const fps: () => Metric<FpsData | null> = () => {
-  const _sampleWindow: Array<number> = []
+
   let _isStable = false
-  let _count = 0
-  let _mean = 0
+  const _sampleWindow: Array<number> = []
+
   let _lowest = Infinity
   let _highest = 0
+  let _count = 0
+  let _mean = 0
 
   let isDocumentVisible = onDocumentVisibilityChange((isVisible) => {
     isDocumentVisible = isVisible
-    _sampleWindow.length = 0
     _isStable = false
-    _count = 0
+    _sampleWindow.length = 0
   })
 
   return (t) => {
     if (!isDocumentVisible) {
-      _sampleWindow.length = 0
-      _isStable = false
-      _count = 0
       return null
     }
     _sampleWindow.push(t)
     let elapsedFromOldest = t - _sampleWindow[0]
     if (!_isStable) {
-      if (elapsedFromOldest >= 1000) {
+      if (elapsedFromOldest >= 1900) {
         _isStable = true
       } else {
         return null
