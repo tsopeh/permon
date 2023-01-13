@@ -5,12 +5,56 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Example app</title>
+    <title>Permon Demo</title>
 </head>
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #controls {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 3rem;
+        border: 1px solid #ffa07a;
+        --size: 6rem;
+    }
+
+    .square {
+        width: var(--size);
+        height: var(--size);
+        position: absolute;
+        animation-name: infinite-animation;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+        animation-direction: normal;
+    }
+
+    @keyframes infinite-animation {
+        0%   {background-color:red; left: calc(-1 * var(--size)); top: calc(-1 * var(--size));}
+        25%  {background-color:yellow; left: 100%; top: calc(-1 * var(--size));}
+        50%  {background-color:blue; left: 100%; top: 100%;}
+        75%  {background-color:green; left: calc(-1 * var(--size)); top: 100%;}
+        100% {background-color:red; left: calc(-1 * var(--size)); top: calc(-1 * var(--size));}
+    }
+</style>
 <body>
 
-<button id="increaseLoad">Increase load</button>
-<button id="releaseMemory">Release memory</button>
+<div id="controls">
+    <button id="spawnSquare">+1 square</button>
+    <button id="increaseWorkload">Increase the workload</button>
+    <button id="releaseMemory">Release the memory</button>
+</div>
+
 
 <script type="module">
   import { Permon } from './lib/main'
@@ -23,30 +67,35 @@
 
   const memory = []
 
-  function increaseLoad () {
-    if (window.performance && window.performance.memory) {
-      // cap at 80% of available memory
-      if (performance.memory.usedJSHeapSize < performance.memory.jsHeapSizeLimit * .8) {
-        var i = 0
-        while (i < 100) {
-          i++
-          memory.push(new Float64Array(Math.pow(2, 10)))
-        }
+  requestAnimationFrame(function heavyWork () {
+      for (let i = 0; i < 100; i++) {
+        memory.forEach(block => {
+          block.forEach((_, index) => {
+            /* HEAVY WORK */
+            Math.sqrt(Math.sin(index) * Math.cos(index))
+          })
+        })
       }
+      requestAnimationFrame(heavyWork)
+    },
+  )
+
+  document.getElementById('spawnSquare').addEventListener('click', () => {
+    const square = document.createElement('div')
+    square.classList.add('square')
+    document.getElementById('controls').appendChild(square)
+  })
+
+  document.getElementById('increaseWorkload').addEventListener('click', () => {
+    for (let i = 0; i < 100; i++) {
+      memory.push(new Float64Array(Math.pow(2, 7)))
     }
-  }
-
-  function releaseMemory () {
-    memory.length = 0
-  }
-
-  document.getElementById('increaseLoad').addEventListener('click', () => {
-    increaseLoad()
   })
 
   document.getElementById('releaseMemory').addEventListener('click', () => {
-    releaseMemory()
+    memory.length = 0
   })
 </script>
+
 </body>
 </html>
