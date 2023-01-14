@@ -8,8 +8,13 @@
     <title>Permon Demo</title>
 </head>
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     html, body {
-        width: 100%;
         height: 100%;
     }
 
@@ -26,12 +31,20 @@
         gap: 1rem;
         padding: 3rem;
         border: 1px solid #ffa07a;
-        --size: 6rem;
+        border-radius: var(--roundness);
+        --size: 4rem;
+        --roundness: 0.4rem
+    }
+
+    button {
+        padding: 0.2rem 0.5rem;
+        border-radius: var(--roundness);
     }
 
     .square {
         width: var(--size);
         height: var(--size);
+        border-radius: var(--roundness);
         position: absolute;
         animation-name: infinite-animation;
         animation-duration: 2s;
@@ -40,11 +53,31 @@
     }
 
     @keyframes infinite-animation {
-        0%   {background-color:red; left: calc(-1 * var(--size)); top: calc(-1 * var(--size));}
-        25%  {background-color:yellow; left: 100%; top: calc(-1 * var(--size));}
-        50%  {background-color:blue; left: 100%; top: 100%;}
-        75%  {background-color:green; left: calc(-1 * var(--size)); top: 100%;}
-        100% {background-color:red; left: calc(-1 * var(--size)); top: calc(-1 * var(--size));}
+        0% {
+            background-color: red;
+            left: calc(-1 * var(--size));
+            top: calc(-1 * var(--size));
+        }
+        25% {
+            background-color: yellow;
+            left: 100%;
+            top: calc(-1 * var(--size));
+        }
+        50% {
+            background-color: blue;
+            left: 100%;
+            top: 100%;
+        }
+        75% {
+            background-color: green;
+            left: calc(-1 * var(--size));
+            top: 100%;
+        }
+        100% {
+            background-color: red;
+            left: calc(-1 * var(--size));
+            top: calc(-1 * var(--size));
+        }
     }
 </style>
 <body>

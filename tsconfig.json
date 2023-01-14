@@ -17,6 +17,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "tmp/vite-project/src"
+    "lib"
   ]
 }
