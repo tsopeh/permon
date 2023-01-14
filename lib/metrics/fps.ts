@@ -1,14 +1,8 @@
 import { onDocumentVisibilityChange } from '../utils'
-import { Metric } from './metric'
+import { BasicStats } from './basic-stats'
+import { Metric } from './types'
 
-export interface FpsData {
-  current: number
-  mean: number
-  lowest: number
-  highest: number
-}
-
-export const fps: () => Metric<FpsData | null> = () => {
+export const fps: () => Metric<BasicStats | null> = () => {
 
   let _isStable = false
   const _sampleWindow: Array<number> = []

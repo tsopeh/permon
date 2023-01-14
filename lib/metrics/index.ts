@@ -1,4 +1,5 @@
-export * from './metric'
+export * from './types'
 export * from './fps'
 export * from './frame-latency'
 export * from './memory'
+export * from './basic-stats'

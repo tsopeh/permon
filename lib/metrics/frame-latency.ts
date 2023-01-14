@@ -1,14 +1,8 @@
 import { onDocumentVisibilityChange } from '../utils'
-import { Metric } from './metric'
+import { BasicStats } from './basic-stats'
+import { Metric } from './types'
 
-export interface FrameLatencyData {
-  current: number
-  mean: number
-  lowest: number
-  highest: number
-}
-
-export const frameLatency: () => Metric<FrameLatencyData | null> = () => {
+export const frameLatency: () => Metric<BasicStats | null> = () => {
 
   let _isStable = false
   let _tFirstVisible = Infinity
