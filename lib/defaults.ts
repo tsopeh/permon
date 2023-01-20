@@ -1,4 +1,4 @@
-import { createBasicStatsPanel, fps, frameLatency, memory } from './metrics'
+import { createBasicStatsPanel, createFpsMetric, createFrameLatencyMetric, createMemoryMetric } from './metrics'
 import { integerFormatter, roundToInt, roundToTwoDecimalPlacesFormatter } from './utils'
 
 export const DEFAULTS = {
@@ -11,7 +11,7 @@ export const DEFAULTS = {
           backgroundColor: '#181d37',
           foregroundColor: '#6ef8fc',
         }),
-        metric: fps(),
+        metric: createFpsMetric(),
       }
     },
     createFrameLatencyMetric: () => {
@@ -22,7 +22,7 @@ export const DEFAULTS = {
           backgroundColor: '#22361a',
           foregroundColor: '#78f123',
         }),
-        metric: frameLatency(),
+        metric: createFrameLatencyMetric(),
       }
     },
     createMemoryMetric: () => {
@@ -33,7 +33,7 @@ export const DEFAULTS = {
           backgroundColor: '#341e2a',
           foregroundColor: '#ec5499',
         }),
-        metric: memory,
+        metric: createMemoryMetric(),
       }
     },
   },

@@ -2,7 +2,7 @@ import { onDocumentVisibilityChange } from '../utils'
 import { BasicStats } from './basic-stats'
 import { Metric } from './types'
 
-export const frameLatency: () => Metric<BasicStats | null> = () => {
+export const createFrameLatencyMetric = () => {
 
   let _isStable = false
   let _tFirstVisible = Infinity
@@ -22,7 +22,7 @@ export const frameLatency: () => Metric<BasicStats | null> = () => {
     _tCurr = Infinity
   })
 
-  return (t) => {
+  const metric: Metric<BasicStats | null> = (t) => {
     if (!isDocumentVisible) {
       return null
     }
@@ -52,5 +52,7 @@ export const frameLatency: () => Metric<BasicStats | null> = () => {
       highest: _highest,
     }
   }
+
+  return metric
 
 }

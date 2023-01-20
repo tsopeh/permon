@@ -2,7 +2,7 @@ import { onDocumentVisibilityChange } from '../utils'
 import { BasicStats } from './basic-stats'
 import { Metric } from './types'
 
-export const fps: () => Metric<BasicStats | null> = () => {
+export const createFpsMetric = () => {
 
   let _isStable = false
   const _sampleWindow: Array<number> = []
@@ -18,7 +18,7 @@ export const fps: () => Metric<BasicStats | null> = () => {
     _sampleWindow.length = 0
   })
 
-  return (t) => {
+  const metric: Metric<BasicStats | null> = (t) => {
     if (!isDocumentVisible) {
       return null
     }
@@ -47,5 +47,7 @@ export const fps: () => Metric<BasicStats | null> = () => {
       highest: _highest,
     }
   }
+
+  return metric
 
 }
