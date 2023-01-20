@@ -11,6 +11,7 @@ export interface BasicStats {
 export interface PanelConfig {
   title?: string
   valueFormatter?: (value: number) => string
+  delayBetweenDomUpdatesMs?: number
   backgroundColor?: string
   foregroundColor?: string
 }
@@ -18,16 +19,18 @@ export interface PanelConfig {
 export interface PanelConfig_Normalized {
   title: string
   valueFormatter: (value: number) => string
+  delayBetweenDomUpdatesMs: number
   backgroundColor: string
   foregroundColor: string
 }
 
-function normalizeConfig (config?: PanelConfig): PanelConfig_Normalized {
+function normalizeConfig (input?: PanelConfig): PanelConfig_Normalized {
   return {
-    title: config?.title ?? 'N/A',
-    valueFormatter: config?.valueFormatter ?? ((value) => value.toString()),
-    backgroundColor: config?.backgroundColor ?? '#0000ff',
-    foregroundColor: config?.foregroundColor ?? '#00ff00',
+    title: input?.title ?? 'N/A',
+    valueFormatter: input?.valueFormatter ?? ((value) => value.toString()),
+    delayBetweenDomUpdatesMs: input?.delayBetweenDomUpdatesMs ?? 50,
+    backgroundColor: input?.backgroundColor ?? '#0000ff',
+    foregroundColor: input?.foregroundColor ?? '#00ff00',
   }
 }
 
@@ -35,7 +38,7 @@ export type BasicStatsPanel = Panel<BasicStats | null>
 
 export function createBasicStatsPanel (_config: PanelConfig): BasicStatsPanel {
 
-  const { title, valueFormatter, backgroundColor, foregroundColor } = normalizeConfig(_config)
+  const { title, valueFormatter, delayBetweenDomUpdatesMs, backgroundColor, foregroundColor } = normalizeConfig(_config)
 
   const pixelRatio = Math.ceil(1 / (window.devicePixelRatio ?? 1))
   const upscaleFactor = pixelRatio + 1
@@ -80,17 +83,17 @@ export function createBasicStatsPanel (_config: PanelConfig): BasicStatsPanel {
   context.globalAlpha = 0.9
   context.fillRect(graphX, graphY, graphWidth, graphHeight)
 
-  let _tLatestRun = -Infinity
+  let _tLatestUpdate = -Infinity
 
   return {
     dom: canvas,
     updateDom: (basicStats) => {
       const t = performance.now()
       // Update once every 50 ms.
-      if (basicStats == null || _tLatestRun + 50 > t) {
+      if (basicStats == null || _tLatestUpdate + delayBetweenDomUpdatesMs > t) {
         return
       } else {
-        _tLatestRun = t
+        _tLatestUpdate = t
       }
 
       const { current: value, lowest: min, highest: max } = basicStats
