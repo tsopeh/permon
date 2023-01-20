@@ -35,7 +35,7 @@ function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
       }, {} as MonitoredMetrics),
     headless: input?.headless ?? false,
     styleAndAppendDomContainer: input?.styleAndAppendDomContainer ?? ((container: HTMLDivElement) => {
-      container.style.cssText = 'display:flex;gap:4px;position:fixed;top:4px;left:4px;opacity:0.9;pointer-events:none;'
+      container.style.cssText = 'z-index:5100;display:flex;gap:4px;position:fixed;top:4px;left:4px;opacity:0.9;pointer-events:none;'
       document.body.appendChild(container)
     }),
     onPublishStats: input?.onPublishStats ?? (() => { }),
