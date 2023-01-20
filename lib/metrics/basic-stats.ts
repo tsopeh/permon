@@ -48,7 +48,7 @@ export function createBasicStatsPanel (_config: PanelConfig): BasicStatsPanel {
   const textY = upscaleFactor * 3
   const fontSize = upscaleFactor * 10
   const graphX = upscaleFactor * 3
-  const graphY = /*2 * */ textY + fontSize
+  const graphY = 2 * textY + fontSize
   const graphWidth = (canvasWidth - 2 * graphX)
   const graphHeight = canvasHeight - graphY - textY
   const graphLineThickness = upscaleFactor * 1

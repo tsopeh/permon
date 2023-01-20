@@ -14,6 +14,13 @@ export const roundDecimal = (decimalPlaces: number) => (x: number): number => {
 
 export const roundToInt = roundDecimal(0)
 
-export function simpleNumberFormatter (x: number): string {
+export function integerFormatter (x: number): string {
   return roundToInt(x).toString()
 }
+
+export const roundToTwoDecimalPlaces = roundDecimal(2)
+
+export function roundToTwoDecimalPlacesFormatter (x: number): string {
+  return roundToTwoDecimalPlaces(x).toString()
+}
+

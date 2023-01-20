@@ -1,7 +1,5 @@
-import { createBasicStatsPanel, fps, frameLatency, memory, Metric, Panel } from './metrics'
-import { roundToInt, simpleNumberFormatter } from './utils'
-
-type MonitoredMetrics = Record<string, { gui?: Panel<any>, metric: Metric<any> }>
+import { DEFAULTS } from './defaults'
+import { Metric, MonitoredMetrics, Panel } from './metrics'
 
 export interface PermonConfig {
   metrics?: Record<string, Metric<any> | { gui?: Panel<any>, metric: Metric<any> }>
@@ -19,42 +17,14 @@ interface PermonConfig_Normalized {
   minDelayMsBetweenPublishingStats: number
 }
 
-const GET_DEFAULT_METRICS = (): MonitoredMetrics => {
-  return {
-    fps: {
-      gui: createBasicStatsPanel({
-        title: 'fps',
-        valueFormatter: simpleNumberFormatter,
-        backgroundColor: '#181d37',
-        foregroundColor: '#6ef8fc',
-      }),
-      metric: fps(),
-    },
-    frameLatency: {
-      gui: createBasicStatsPanel({
-        title: 'lat',
-        valueFormatter: simpleNumberFormatter,
-        backgroundColor: '#22361a',
-        foregroundColor: '#78f123',
-      }),
-      metric: frameLatency(),
-    },
-    memory: {
-      gui: createBasicStatsPanel({
-        title: 'mem',
-        valueFormatter: (value) => (roundToInt(value * 0.000001)).toString(),
-        backgroundColor: '#341e2a',
-        foregroundColor: '#ec5499',
-      }),
-      metric: memory,
-    },
-  }
-}
-
 function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
   return {
     metrics: input?.metrics == null
-      ? GET_DEFAULT_METRICS()
+      ? {
+        fps: DEFAULTS.metrics.createFpsMetric(),
+        frameLatency: DEFAULTS.metrics.createFrameLatencyMetric(),
+        memory: DEFAULTS.metrics.createMemoryMetric(),
+      }
       : Object.entries(input.metrics).reduce((acc, [key, rawMetric]) => {
         return {
           ...acc,
@@ -78,12 +48,7 @@ export class Permon {
   private rafId: number | null = null
   private domContainer: HTMLElement | null = null
 
-  public static readonly DEFAULTS = {
-    getDefaultMetrics: GET_DEFAULT_METRICS,
-    formatters: {
-      simpleNumberFormatter,
-    },
-  }
+  public static readonly DEFAULTS = DEFAULTS
 
   public constructor (_config?: PermonConfig) {
 
