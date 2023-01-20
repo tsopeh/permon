@@ -1,8 +1,8 @@
-import { onDocumentVisibilityChange } from '../utils'
+import { onDocumentVisibilityChange } from '../../utils'
+import { MetricCalculator } from '../types'
 import { BasicStats } from './basic-stats'
-import { Metric } from './types'
 
-export const createFrameLatencyMetric = () => {
+export const createFrameLatencyCalculator = () => {
 
   let _isStable = false
   let _tFirstVisible = Infinity
@@ -22,7 +22,7 @@ export const createFrameLatencyMetric = () => {
     _tCurr = Infinity
   })
 
-  const metric: Metric<BasicStats | null> = (t) => {
+  const metric: MetricCalculator<BasicStats | null> = (t) => {
     if (!isDocumentVisible) {
       return null
     }

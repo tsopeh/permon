@@ -1,8 +1,8 @@
-import { onDocumentVisibilityChange } from '../utils'
+import { onDocumentVisibilityChange } from '../../utils'
+import { MetricCalculator } from '../types'
 import { BasicStats } from './basic-stats'
-import { Metric } from './types'
 
-export const createFpsMetric = () => {
+export const createFpsCalculator = () => {
 
   let _isStable = false
   const _sampleWindow: Array<number> = []
@@ -18,7 +18,7 @@ export const createFpsMetric = () => {
     _sampleWindow.length = 0
   })
 
-  const metric: Metric<BasicStats | null> = (t) => {
+  const metric: MetricCalculator<BasicStats | null> = (t) => {
     if (!isDocumentVisible) {
       return null
     }

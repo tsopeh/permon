@@ -1,5 +1,5 @@
-import { roundToInt } from '../utils'
-import { Panel } from './types'
+import { roundToInt } from '../../utils'
+import { Panel } from '../types'
 
 export interface BasicStats {
   current: number

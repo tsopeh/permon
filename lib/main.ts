@@ -1,8 +1,8 @@
 import { DEFAULTS } from './defaults'
-import { Metric, MonitoredMetrics, Panel } from './metrics'
+import { MetricCalculator, MonitoredMetrics, Panel } from './metrics'
 
 export interface PermonConfig {
-  metrics?: Record<string, Metric<any> | { gui?: Panel<any>, metric: Metric<any> }>
+  metrics?: Record<string, MetricCalculator<any> | { gui?: Panel<any>, calculator: MetricCalculator<any> }>
   headless?: boolean
   styleAndAppendDomContainer?: (container: HTMLDivElement) => void
   onPublishStats?: (stats: Record<string, any>) => void
@@ -29,8 +29,8 @@ function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
         return {
           ...acc,
           [key]: rawMetric instanceof Function
-            ? { metric: rawMetric }
-            : { gui: rawMetric.gui, metric: rawMetric.metric },
+            ? { calculator: rawMetric }
+            : { gui: rawMetric.gui, calculator: rawMetric.calculator },
         }
       }, {} as MonitoredMetrics),
     headless: input?.headless ?? false,
@@ -68,9 +68,9 @@ export class Permon {
 
     const onAnimationFrame = () => {
       const t = performance.now()
-      const stats: Record<string, Metric<any>> = {}
-      for (const [key, { metric, gui }] of Object.entries(config.metrics)) {
-        const value = metric(t)
+      const stats: Record<string, MetricCalculator<any>> = {}
+      for (const [key, { calculator, gui }] of Object.entries(config.metrics)) {
+        const value = calculator(t)
         stats[key] = value
         if (!config.headless && gui != null) {
           gui.updateDom(value)
