@@ -1,8 +1,11 @@
 {
   "name": "permon",
   "version": "1.0.0",
-  "description": "A simple and customizable performance monitor for your clientside apps.",
-  "repository": "git@github.com:tsopeh/permon.git",
+  "description": "A batteries-included performance monitor for web apps.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsopeh/permon.git"
+  },
   "author": "Petar Stokić <5ar100kic@gmail.com>",
   "license": "MIT",
   "files": [
@@ -18,8 +21,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && rm -rf ./release/* && cp ./dist/* ./release/",
+    "build": "vite build",
     "build-demo": "vite build --config vite-demo.config.ts",
+    "build-release": "yarn run build && yarn run build-demo",
     "preview": "vite preview"
   },
   "devDependencies": {

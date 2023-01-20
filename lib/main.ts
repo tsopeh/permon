@@ -7,6 +7,7 @@ export interface PermonConfig {
   styleAndAppendDomContainer?: (container: HTMLDivElement) => void
   onPublishStats?: (stats: Record<string, any>) => void
   minDelayMsBetweenPublishingStats?: number
+  skipGreeting?: boolean
 }
 
 interface PermonConfig_Normalized {
@@ -15,6 +16,7 @@ interface PermonConfig_Normalized {
   styleAndAppendDomContainer: (container: HTMLDivElement) => void
   onPublishStats: ((stats: Record<string, any>) => void)
   minDelayMsBetweenPublishingStats: number
+  skipGreeting: boolean
 }
 
 function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
@@ -40,6 +42,7 @@ function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
     }),
     onPublishStats: input?.onPublishStats ?? (() => { }),
     minDelayMsBetweenPublishingStats: Math.max(0, input?.minDelayMsBetweenPublishingStats ?? 1000),
+    skipGreeting: input?.skipGreeting ?? false,
   }
 }
 
@@ -85,6 +88,10 @@ export class Permon {
 
     this.rafId = requestAnimationFrame(onAnimationFrame)
 
+    if (!config.skipGreeting) {
+      console.log(`Permon (${Permon.__PERMON_VERSION__}) has started monitoring the page performance.`)
+    }
+
   }
 
   public destroy () {
@@ -94,5 +101,7 @@ export class Permon {
     this.rafId = null
     this.domContainer?.remove()
   }
+
+  public static readonly __PERMON_VERSION__ = import.meta.env.__PERMON_VERSION__
 
 }

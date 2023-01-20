@@ -15,5 +15,10 @@ module.exports = defineConfig({
       formats: ['es', 'cjs', 'umd', 'iife'],
       fileName: (format) => `${libName}.${format}.js`,
     },
+    sourcemap: true,
+    outDir: 'dist',
+  },
+  define: {
+    'import.meta.env.__PERMON_VERSION__': JSON.stringify(`v${process.env.npm_package_version}`),
   },
 })
