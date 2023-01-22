@@ -1,34 +1,35 @@
 {
   "name": "permon",
   "version": "1.0.0",
-  "description": "A batteries-included performance monitor for web apps.",
+  "description": "A simple performance monitor for for web apps and games.",
   "repository": {
     "type": "git",
     "url": "https://github.com/tsopeh/permon.git"
   },
   "author": "Petar Stokić <5ar100kic@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ],
-  "main": "./dist/permon.umd.js",
-  "module": "./dist/permon.es.js",
+  "main": "./dist/permon.umd.cjs",
+  "module": "./dist/permon.js",
+  "types": "./index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/permon.es.js",
-      "require": "./dist/permon.umd.js"
-    }
+    "types": "./index.d.ts",
+    "import": "./dist/permon.js",
+    "require": "./dist/permon.umd.cjs"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build-demo": "vite build --config vite-demo.config.ts",
-    "build-release": "yarn run build && yarn run build-demo",
-    "preview": "vite preview"
+    "build": "tsc && vite build",
+    "build-demo": "tsc && vite build --config vite-demo.config.ts",
+    "build-release": "yarn run build && yarn run build-demo"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
     "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "vite": "^4.0.4",
+    "vite-plugin-dts": "^1.7.1"
   }
 }

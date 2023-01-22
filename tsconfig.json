@@ -3,10 +3,11 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ESNext","DOM"],
+    "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
     "strict": true,
     "allowUnusedLabels": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
@@ -17,7 +18,5 @@
     "skipLibCheck": true,
     "types": ["vite/client"]
   },
-  "include": [
-    "lib"
-  ]
+  "include": ["lib"]
 }

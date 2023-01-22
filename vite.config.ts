@@ -1,23 +1,24 @@
-import * as path from 'path'
 import { defineConfig } from 'vite'
+import dts from 'vite-plugin-dts'
 
 const libName = 'permon'
 
-module.exports = defineConfig({
+export default defineConfig({
   server: {
     port: 5100,
     host: true,
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'lib/main.ts'),
+      entry: 'lib/index.ts',
       name: libName,
-      formats: ['es', 'cjs', 'umd', 'iife'],
-      fileName: (format) => `${libName}.${format}.js`,
+      fileName: libName,
     },
     sourcemap: true,
+    minify: false,
     outDir: 'dist',
   },
+  plugins: [dts({ insertTypesEntry: true }),],
   define: {
     'import.meta.env.__PERMON_VERSION__': JSON.stringify(`v${process.env.npm_package_version}`),
   },

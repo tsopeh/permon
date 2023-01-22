@@ -9,7 +9,7 @@ export interface BasicStats {
 }
 
 export interface PanelConfig {
-  title?: string
+  title: string
   valueFormatter?: (value: number) => string
   delayBetweenDomUpdatesMs?: number
   backgroundColor?: string
@@ -24,19 +24,19 @@ export interface PanelConfig_Normalized {
   foregroundColor: string
 }
 
-function normalizeConfig (input?: PanelConfig): PanelConfig_Normalized {
-  return {
+const normalizeConfig = (input?: PanelConfig): PanelConfig_Normalized => {
+  return ({
     title: input?.title ?? 'N/A',
     valueFormatter: input?.valueFormatter ?? ((value) => value.toString()),
-    delayBetweenDomUpdatesMs: input?.delayBetweenDomUpdatesMs ?? 50,
+    delayBetweenDomUpdatesMs: input?.delayBetweenDomUpdatesMs ?? 250,
     backgroundColor: input?.backgroundColor ?? '#0000ff',
     foregroundColor: input?.foregroundColor ?? '#00ff00',
-  }
+  })
 }
 
 export type BasicStatsPanel = Panel<BasicStats | null>
 
-export function createBasicStatsPanel (_config: PanelConfig): BasicStatsPanel {
+export const createBasicStatsPanel = (_config: PanelConfig): BasicStatsPanel => {
 
   const { title, valueFormatter, delayBetweenDomUpdatesMs, backgroundColor, foregroundColor } = normalizeConfig(_config)
 
@@ -87,22 +87,22 @@ export function createBasicStatsPanel (_config: PanelConfig): BasicStatsPanel {
 
   return {
     dom: canvas,
-    updateDom: (basicStats) => {
+    updateDom: (stats: BasicStats | null) => {
       const t = performance.now()
       // Update once every 50 ms.
-      if (basicStats == null || _tLatestUpdate + delayBetweenDomUpdatesMs > t) {
+      if (stats == null || _tLatestUpdate + delayBetweenDomUpdatesMs > t) {
         return
       } else {
         _tLatestUpdate = t
       }
 
-      const { current: value, lowest: min, highest: max } = basicStats
+      const { current: value, lowest: min, highest: max } = stats
 
       context.fillStyle = backgroundColor
       context.globalAlpha = 1
       context.fillRect(0, 0, canvasWidth, graphY)
       context.fillStyle = foregroundColor
-      context.fillText(`${title} (${valueFormatter(min)}-${valueFormatter(max)}) ${valueFormatter(value)}`, textX, textY)
+      context.fillText(`${title} (${valueFormatter(min)}–${valueFormatter(max)}) ${valueFormatter(value)}`, textX, textY)
 
       context.drawImage(canvas, graphX + graphLinesSpacing, graphY, graphWidth - graphLinesSpacing, graphHeight, graphX, graphY, graphWidth - graphLinesSpacing, graphHeight)
 

@@ -1,4 +1,6 @@
-export function onDocumentVisibilityChange (callback: (isDocumentVisible: boolean) => void): boolean {
+import { metricsUtils } from './metrics/defaults'
+
+export const onDocumentVisibilityChange = (callback: (isDocumentVisible: boolean) => void): boolean => {
 
   document.addEventListener('visibilitychange', () => {
     callback(!document.hidden)
@@ -14,13 +16,19 @@ export const roundDecimal = (decimalPlaces: number) => (x: number): number => {
 
 export const roundToInt = roundDecimal(0)
 
-export function integerFormatter (x: number): string {
-  return roundToInt(x).toString()
-}
+export const integerFormatter = (x: number): string => roundToInt(x).toString()
 
 export const roundToTwoDecimalPlaces = roundDecimal(2)
 
-export function roundToTwoDecimalPlacesFormatter (x: number): string {
-  return roundToTwoDecimalPlaces(x).toString()
-}
+export const roundToTwoDecimalPlacesFormatter = (x: number): string => roundToTwoDecimalPlaces(x).toString()
 
+export const UTILS = {
+  permonVersion: import.meta.env.__PERMON_VERSION__,
+  metrics: metricsUtils,
+  formatters: {
+    roundDecimal,
+    integerFormatter,
+    roundToTwoDecimalPlacesFormatter,
+  },
+  onDocumentVisibilityChange,
+}

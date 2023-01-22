@@ -1,10 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Permon Demo</title>
 </head>
 <style>
@@ -89,9 +87,15 @@
 </div>
 
 <script type="module">
-  import { Permon } from './lib/main'
+  import { Permon } from './lib'
 
-  const permon = new Permon({
+  new Permon({
+    metrics: {
+      ...Permon.UTILS.metrics.createAllDefaultMetrics(), // This will create all the default metrics.
+      clientTime: {
+        calculator: () => (new Date).toISOString(),
+      },
+    },
     onPublishStats: (stats) => {
       console.table(stats)
     },

@@ -1,40 +1,34 @@
-import { DEFAULTS } from './defaults'
-import { MetricCalculator, MonitoredMetrics, Panel } from './metrics'
+import { MonitoredMetrics, UnwrapMonitoredMetrics } from './metrics'
+import { UTILS } from './utils'
 
-export interface PermonConfig {
-  metrics?: Record<string, MetricCalculator<any> | { gui?: Panel<any>, calculator: MetricCalculator<any> }>
+export interface PermonConfig<T extends MonitoredMetrics> {
+  metrics?: T
   headless?: boolean
   styleAndAppendDomContainer?: (container: HTMLDivElement) => void
-  onPublishStats?: (stats: Record<string, any>) => void
+  onPublishStats?: (stats: UnwrapMonitoredMetrics<T>) => void
   minDelayMsBetweenPublishingStats?: number
   skipGreeting?: boolean
 }
 
-interface PermonConfig_Normalized {
-  metrics: MonitoredMetrics
+interface PermonConfig_Normalized<T extends MonitoredMetrics> {
+  metrics: T
   headless: boolean
   styleAndAppendDomContainer: (container: HTMLDivElement) => void
-  onPublishStats: ((stats: Record<string, any>) => void)
+  onPublishStats: (stats: UnwrapMonitoredMetrics<T>) => void
   minDelayMsBetweenPublishingStats: number
   skipGreeting: boolean
 }
 
-function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
+const normalizeConfig = <T extends MonitoredMetrics> (input?: PermonConfig<T>): PermonConfig_Normalized<T> => {
   return {
     metrics: input?.metrics == null
-      ? {
-        fps: DEFAULTS.metrics.createFpsMetric(),
-        frameLatency: DEFAULTS.metrics.createFrameLatencyMetric(),
-        memory: DEFAULTS.metrics.createMemoryMetric(),
-      }
+      ? UTILS.metrics.createAllDefaultMetrics()
       : Object.entries(input.metrics).reduce((acc, [key, rawMetric]) => {
         return {
           ...acc,
-          [key]: rawMetric instanceof Function
-            ? { calculator: rawMetric }
-            : { gui: rawMetric.gui, calculator: rawMetric.calculator },
+          [key]: { panel: rawMetric.panel, calculator: rawMetric.calculator },
         }
-      }, {} as MonitoredMetrics),
+      }, {} as any),
     headless: input?.headless ?? false,
     styleAndAppendDomContainer: input?.styleAndAppendDomContainer ?? ((container: HTMLDivElement) => {
       container.style.cssText = 'z-index:5100;display:flex;gap:4px;position:fixed;top:4px;left:4px;opacity:0.9;pointer-events:none;'
@@ -46,22 +40,22 @@ function normalizeConfig (input?: PermonConfig): PermonConfig_Normalized {
   }
 }
 
-export class Permon {
+export class Permon<T extends MonitoredMetrics> {
 
   private rafId: number | null = null
   private domContainer: HTMLElement | null = null
 
-  public static readonly DEFAULTS = DEFAULTS
+  public static readonly UTILS = UTILS
 
-  public constructor (_config?: PermonConfig) {
+  public constructor (_config?: PermonConfig<T>) {
 
     const config = normalizeConfig(_config)
 
     if (!config.headless) {
       const container = document.createElement('div')
-      for (const [_, { gui }] of Object.entries(config.metrics)) {
-        if (gui?.dom != null) {
-          container.appendChild(gui.dom)
+      for (const [_, { panel }] of Object.entries(config.metrics)) {
+        if (panel?.dom != null) {
+          container.appendChild(panel.dom)
         }
       }
       config.styleAndAppendDomContainer(container)
@@ -71,12 +65,12 @@ export class Permon {
 
     const onAnimationFrame = () => {
       const t = performance.now()
-      const stats: Record<string, MetricCalculator<any>> = {}
-      for (const [key, { calculator, gui }] of Object.entries(config.metrics)) {
+      const stats = {} as UnwrapMonitoredMetrics<T>
+      for (const [key, { calculator, panel }] of Object.entries(config.metrics)) {
         const value = calculator(t)
-        stats[key] = value
-        if (!config.headless && gui != null) {
-          gui.updateDom(value)
+        stats[key as keyof T] = value
+        if (!config.headless && panel != null) {
+          panel.updateDom(value)
         }
       }
       if (tLatestPublish + config.minDelayMsBetweenPublishingStats <= t) {
@@ -89,7 +83,7 @@ export class Permon {
     this.rafId = requestAnimationFrame(onAnimationFrame)
 
     if (!config.skipGreeting) {
-      console.log(`Permon (${Permon.__PERMON_VERSION__}) has started monitoring the page performance.`)
+      console.log(`Permon (${UTILS.permonVersion}) has started monitoring the page performance.`)
     }
 
   }
@@ -101,7 +95,5 @@ export class Permon {
     this.rafId = null
     this.domContainer?.remove()
   }
-
-  public static readonly __PERMON_VERSION__ = import.meta.env.__PERMON_VERSION__
 
 }
