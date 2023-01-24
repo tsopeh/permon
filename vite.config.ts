@@ -12,13 +12,14 @@ export default defineConfig({
     lib: {
       entry: 'lib/index.ts',
       name: libName,
+      formats: ['es', 'umd', 'iife'],
       fileName: libName,
     },
     sourcemap: true,
     minify: false,
     outDir: 'dist',
   },
-  plugins: [dts({ insertTypesEntry: true }),],
+  plugins: [dts({ insertTypesEntry: true })],
   define: {
     'import.meta.env.__PERMON_VERSION__': JSON.stringify(`v${process.env.npm_package_version}`),
   },
