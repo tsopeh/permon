@@ -41,7 +41,7 @@ export const createBasicStatsPanel = (_config: PanelConfig): BasicStatsPanel => 
   const { title, valueFormatter, delayBetweenDomUpdatesMs, backgroundColor, foregroundColor } = normalizeConfig(_config)
 
   const pixelRatio = Math.ceil(1 / (window.devicePixelRatio ?? 1))
-  const upscaleFactor = pixelRatio + 1
+  const upscaleFactor = pixelRatio + 2
 
   const _rawCanvasWidth = 120
   const _rawCanvasHeight = 60

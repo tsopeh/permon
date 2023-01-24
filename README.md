@@ -2,6 +2,8 @@
 
 A simple **per**formance **mon**itor for web apps and games. Checkout the [Configuration and usage](#configuration-and-usage) section for the detailed overview of the features.
 
+![Permon's panels](https://i.imgur.com/iVP4rC2.png)
+
 ## Quick Start
 
 ### Package (module)
