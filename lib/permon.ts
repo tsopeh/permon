@@ -1,5 +1,5 @@
 import { MonitoredMetrics, UnwrapMonitoredMetrics } from './metrics'
-import { UTILS } from './utils'
+import { makeElementMovable, px, UTILS } from './utils'
 
 export interface PermonConfig<T extends MonitoredMetrics> {
   metrics?: T
@@ -31,7 +31,14 @@ const normalizeConfig = <T extends MonitoredMetrics> (input?: PermonConfig<T>): 
       }, {} as any),
     headless: input?.headless ?? false,
     styleAndAppendDomContainer: input?.styleAndAppendDomContainer ?? ((container: HTMLDivElement) => {
-      container.style.cssText = 'z-index:5100;display:flex;gap:4px;position:fixed;top:4px;left:4px;opacity:0.9;pointer-events:none;'
+      container.style.cssText = 'z-index:5100;display:flex;gap:4px;position:fixed;opacity:0.9;cursor:grab;user-select:none;touch-action:none;'
+
+      container.style.top = px(0)
+      container.style.left = px(0)
+      container.style.transform = 'translate(4px, 4px)'
+
+      makeElementMovable(container)
+
       document.body.appendChild(container)
     }),
     onPublishStats: input?.onPublishStats ?? (() => { }),

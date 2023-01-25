@@ -62,6 +62,7 @@ export const createBasicStatsPanel = (_config: PanelConfig): BasicStatsPanel => 
   canvas.height = canvasHeight
   canvas.style.width = pixelRatio * _rawCanvasWidth + 'px'
   canvas.style.height = pixelRatio * _rawCanvasHeight + 'px'
+  canvas.style.pointerEvents = 'none'
 
   const context = canvas.getContext('2d')
 
