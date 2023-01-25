@@ -36,7 +36,7 @@ new Permon()
 You can test `permon` on **any** webpage that supports [Bookmarklets](https://en.wikipedia.org/wiki/Bookmarklet), by creating a new bookmark and filling its address field with the code snippet below. Alternatively you can paste the same snippet in the browser's address bar. It's important that the snippet **starts with** `javscript:`.
 
 ```javascript
-javascript:(function(){var s=document.createElement("script");s.onload=function(){new permon.Permon({onPublishStats:e=>{console.table(e)}})},s.src="//tsopeh.github.io/permon/dist/permon.iife.js",document.head.appendChild(s)})();
+javascript:(function(){var s=document.createElement("script");s.onload=function(){new permon.Permon()},s.src="//tsopeh.github.io/permon/dist/permon.iife.js",document.head.appendChild(s)})();
 ```
 
 > **Note**
@@ -73,7 +73,7 @@ new Permon({
 })
 ```
 
-You can also define your own metrics, or additional info that can help you. One example would be capturing the client's time when the  — .
+You can also define your own metrics, or additional info that can help you. One example would be capturing the client's time when the stats were recorded.
 
 ```typescript
 import { Permon } from 'permon'
