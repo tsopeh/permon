@@ -1,6 +1,5 @@
 import { onDocumentVisibilityChange } from '../../utils'
-import { MetricCalculator } from '../types'
-import { BasicStats } from './basic-stats'
+import { BasicStats, MetricCalculator } from '../types'
 
 export const createFrameLatencyCalculator = () => {
 

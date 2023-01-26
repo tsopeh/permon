@@ -12,3 +12,10 @@ export type MonitoredMetrics = Record<string, CalculatorAndPanel<any>>
 export type UnwrapMonitoredMetrics<T extends MonitoredMetrics> = {
   [K in keyof T]: (T[K] extends CalculatorAndPanel<infer U> ? U : never)
 }
+
+export interface BasicStats {
+  current: number
+  mean: number
+  lowest: number
+  highest: number
+}

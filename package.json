@@ -1,6 +1,6 @@
 {
   "name": "permon",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple performance monitor for for web apps and games.",
   "repository": {
     "type": "git",

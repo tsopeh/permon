@@ -1,5 +1,5 @@
 import { integerFormatter, roundToInt } from '../utils'
-import { createBasicStatsPanel } from './basic-stats/basic-stats'
+import { createBasicStatsPanel } from './basic-stats/basic-stats-panel'
 import { createFpsCalculator } from './basic-stats/fps'
 import { createFrameLatencyCalculator } from './basic-stats/frame-latency'
 import { createMemoryCalculator } from './basic-stats/memory'
@@ -52,4 +52,5 @@ export const metricsUtils = {
       memory: { calculator: memory.createCalculator(), panel: memory.createPanel() },
     }
   },
+  createBasicStatsPanel,
 }

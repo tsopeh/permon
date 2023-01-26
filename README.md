@@ -73,7 +73,59 @@ new Permon({
 })
 ```
 
-You can also define your own metrics, or additional info that can help you. One example would be capturing the client's time when the stats were recorded.
+You can also define your own metrics. 
+
+A _metric_ is made of two parts, the "calculator" function that produces stats, and the (**optional**) "panel" UI.
+
+The "calculator" function is a simple function that will receive a new timestamp on each [animation frame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame). You can use these timestamps to help you calculate whatever stats you want. 
+
+The "Panel" is an object that contains:
+    * a DOM element that will be appended next to other panels;
+    * an `updateDom` function, that receives the stats produced by the _calculator_, and updates the DOM element to display the stats.
+
+The three default metrics that Permon offers, all produce the stats that follow the `BasicStats` interface (see below).
+
+```typescript
+// Stats that we want to callculate.
+interface BasicStats {
+  current: number
+  mean: number
+  lowest: number
+  highest: number
+}
+
+const calculator = (timestamp: number): BasicStats => {
+  /*
+   * Calculate stats.
+   */
+  return stats
+}
+
+const panel = {
+  dom: domElement,
+  updateDom: (stats: BasicStats) => {
+    /*
+    * Display stats in the `domElement`.
+    */
+  },
+}
+
+// Usage.
+
+import { Permon } from 'permon'
+
+new Permon({
+  metrics: {
+    ...Permon.UTILS.metrics.createAllDefaultMetrics(), // This will create all the default metrics.
+    myCustomMetric: {
+      calculator: calculator,
+      panel: panel,
+    },
+  },
+})
+```
+
+One simple example of capturing additional data is determining the client's time when the other stats were recorded. For this we will ignore the time stamp, since it's not needed for the calculation, and we can assume that UI is not needed. 
 
 ```typescript
 import { Permon } from 'permon'
@@ -97,7 +149,7 @@ new Permon({
   onPublishStats: (stats) => {
     console.table(stats)
   },
-  minDelayMsBetweenPublishingStats: 1000 // Once per second, by default. Setting this option to `0` can be interpreted as "As fast as possible".
+  minDelayMsBetweenPublishingStats: 1000, // Once per second, by default. Setting this option to `0` can be interpreted as "As fast as possible".
 })
 ```
 
@@ -118,6 +170,10 @@ new Permon({
 ```
 
 ## Q&A
+
+**This tool appears to be similar to others. What does this one bring to the table?**
+
+Permon, and its UI panels were inspired by [stats.js](https://github.com/mrdoob/stats.js/) and [gamestats](https://github.com/ErikSom/gamestats). The difference is that Permon is opinionated on how and when it measures performance — while it stays open for extension. You can create your own metrics and/or panels. You can access the stats and handle them however you wish. It's written in Typescript, which provides better development experience for developers and maintainers.
 
 **Why is there a brief delay before `FPS` and `Frame Latency` panels show any data?**
 

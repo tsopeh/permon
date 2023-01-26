@@ -1,5 +1,4 @@
-import { MetricCalculator } from '../types'
-import { BasicStats } from './basic-stats'
+import { BasicStats, MetricCalculator } from '../types'
 
 /**
  * More info on memory estimation: https://developer.mozilla.org/en-US/docs/Web/API/Performance/memory

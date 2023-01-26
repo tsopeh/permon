@@ -1,12 +1,5 @@
 import { roundToInt } from '../../utils'
-import { Panel } from '../types'
-
-export interface BasicStats {
-  current: number
-  mean: number
-  lowest: number
-  highest: number
-}
+import { BasicStats, Panel } from '../types'
 
 export interface PanelConfig {
   title: string
