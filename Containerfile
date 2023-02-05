@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 FROM docker.io/node:18 AS build
 WORKDIR /app
 COPY package* yarn.lock ./
